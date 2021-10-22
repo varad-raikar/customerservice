@@ -2,10 +2,12 @@ package com.app.springboot.customerservice.dto;
 
 import com.app.springboot.customerservice.entity.Address;
 import com.app.springboot.customerservice.entity.Customer;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class CustomerResponse {
 
     private int customerId;

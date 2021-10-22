@@ -1,7 +1,9 @@
 package com.app.springboot.customerservice.service;
 
+import com.app.springboot.customerservice.dto.AddAddressRequest;
 import com.app.springboot.customerservice.dto.CustomerRequest;
 import com.app.springboot.customerservice.dto.CustomerResponse;
+import com.app.springboot.customerservice.dto.NumberUpdateRequest;
 import com.app.springboot.customerservice.entity.Address;
 import com.app.springboot.customerservice.entity.Customer;
 import com.app.springboot.customerservice.entity.Subscription;
@@ -27,11 +29,11 @@ public class ServiceImpl implements IService {
     @Autowired
     private SubscriptionRepository subscriptionRepository;
 
-    @Override
-    @Transactional
-    public Customer findById(int theId) {
-        return null;
-    }
+//    @Override
+//    @Transactional
+//    public Customer findById(int theId) {
+//        return findById(theId);
+//    }
 
     @Override
     @Transactional
@@ -51,14 +53,50 @@ public class ServiceImpl implements IService {
         Address address = new Address();
         address.setAddressType(inCustomer.getAddressType());
         address.setAddress(inCustomer.getAddress());
-//        address = addressRepository.save(address);
 
         List<Address> addressList = new ArrayList<Address>();
         addressList.add(address);
         customer.setAddress(addressList);
         customer = customerRepository.save(customer);
 
-        CustomerResponse response = new CustomerResponse(customer);
-        return response;
+        return new CustomerResponse(customer);
+    }
+
+    @Override
+    @Transactional
+    public CustomerResponse updateNumber(NumberUpdateRequest inNumber) {
+        Customer customer = customerRepository.findById(inNumber.getId()).get();
+        if (customer == null) {
+            throw new RuntimeException("Customer not found");
+        }
+        customer.setContactNo(inNumber.getNumber());
+        customer = customerRepository.save(customer);
+        return new CustomerResponse(customer);
+    }
+
+    @Override
+    @Transactional
+    public CustomerResponse addAddress(AddAddressRequest inAddress) {
+        Customer customer = customerRepository.findById(inAddress.getId()).get();
+        if (customer == null) {
+            throw new RuntimeException("Customer not found");
+        }
+        List<Address> addressList = customer.getAddress();
+        if (addressList.size() > 0) {
+            for (Address eachAddress : addressList) {
+                if (eachAddress.getAddressType() == inAddress.getAddressType()) {
+                    eachAddress.setAddress(inAddress.getAddress());
+                    addressRepository.save(eachAddress);
+                    return new CustomerResponse(customerRepository.findById(customer.getId()).get());
+                }
+            }
+
+        }
+        Address newAddress = new Address();
+        newAddress.setAddressType(inAddress.getAddressType());
+        newAddress.setAddress(inAddress.getAddress());
+        addressList.add(newAddress);
+        customer = customerRepository.save(customer);
+        return new CustomerResponse(customer);
     }
 }

@@ -1,8 +1,7 @@
 package com.app.springboot.customerservice.entity;
 
 import com.app.springboot.customerservice.dto.CustomerRequest;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -34,7 +33,9 @@ public class Customer {
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "customer_id")
     private List<Address> address;
 
     public Customer(CustomerRequest theCustomer){
