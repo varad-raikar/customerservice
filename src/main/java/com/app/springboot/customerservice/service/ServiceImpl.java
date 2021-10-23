@@ -82,12 +82,13 @@ public class ServiceImpl implements IService {
             throw new RuntimeException("Customer not found");
         }
         List<Address> addressList = customer.getAddress();
+
         if (addressList.size() > 0) {
             for (Address eachAddress : addressList) {
-                if (eachAddress.getAddressType() == inAddress.getAddressType()) {
+                if (eachAddress.getAddressType().equals(inAddress.getAddressType())) {
                     eachAddress.setAddress(inAddress.getAddress());
                     addressRepository.save(eachAddress);
-                    return new CustomerResponse(customerRepository.findById(customer.getId()).get());
+                    return new CustomerResponse(customer);
                 }
             }
 
