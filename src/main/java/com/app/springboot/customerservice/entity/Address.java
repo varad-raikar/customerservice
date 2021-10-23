@@ -22,8 +22,4 @@ public class Address {
     @Column(name = "address")
     private String address;
 
-//    @ManyToOne
-//    @JoinColumn(name = "customer_id")
-//    private Customer customer;
-
 }

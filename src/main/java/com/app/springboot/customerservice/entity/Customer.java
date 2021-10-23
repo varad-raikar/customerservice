@@ -33,7 +33,6 @@ public class Customer {
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
-//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id")
     private List<Address> address;

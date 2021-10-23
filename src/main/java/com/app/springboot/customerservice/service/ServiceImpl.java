@@ -29,12 +29,6 @@ public class ServiceImpl implements IService {
     @Autowired
     private SubscriptionRepository subscriptionRepository;
 
-//    @Override
-//    @Transactional
-//    public Customer findById(int theId) {
-//        return findById(theId);
-//    }
-
     @Override
     @Transactional
     public CustomerResponse save(CustomerRequest inCustomer) {
