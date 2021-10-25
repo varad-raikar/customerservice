@@ -1,5 +1,8 @@
 package com.app.springboot.customerservice.service;
 
+import com.app.springboot.customerservice.controller.CustomerAlreadyExistsException;
+import com.app.springboot.customerservice.controller.CustomerNotFoundException;
+import com.app.springboot.customerservice.controller.CustomerValidationException;
 import com.app.springboot.customerservice.dto.AddAddressRequest;
 import com.app.springboot.customerservice.dto.CustomerRequest;
 import com.app.springboot.customerservice.dto.CustomerResponse;
@@ -11,11 +14,14 @@ import com.app.springboot.customerservice.repo.AddressRepository;
 import com.app.springboot.customerservice.repo.CustomerRepository;
 import com.app.springboot.customerservice.repo.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ServiceImpl implements IService {
@@ -31,16 +37,36 @@ public class ServiceImpl implements IService {
 
     @Override
     @Transactional
-    public CustomerResponse save(CustomerRequest inCustomer) {
+    public ResponseEntity<CustomerResponse> findCustomer(Integer id) {
+        Customer customer = findById(id);
+        CustomerResponse response = new CustomerResponse(customer);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Override
+    @Transactional
+    public Customer findById(Integer id) {
+        Optional<Customer> customerOptional = customerRepository.findById(id);
+        if (customerOptional.isEmpty()){
+            throw new CustomerNotFoundException("Customer id " + id + " not found");
+        }
+
+        return customerOptional.get();
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<CustomerResponse> save(CustomerRequest inCustomer) {
         if (customerRepository.findByEmail(inCustomer.getEmail()) != null){
-            throw new RuntimeException("Customer already exists");
+            throw new CustomerAlreadyExistsException("Customer already exists");
         }
 
         Customer customer = new Customer(inCustomer);
 
         Subscription subscription = subscriptionRepository.findByName((inCustomer.getSubscriptionType()).toUpperCase());
         if (subscription == null) {
-            throw new RuntimeException("Invalid subscription type");
+            throw new CustomerValidationException("Invalid subscription type");
         }
         customer.setSubscription(subscription);
 
@@ -53,28 +79,27 @@ public class ServiceImpl implements IService {
         customer.setAddress(addressList);
         customer = customerRepository.save(customer);
 
-        return new CustomerResponse(customer);
+        CustomerResponse response = new CustomerResponse(customer);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @Override
     @Transactional
-    public CustomerResponse updateNumber(NumberUpdateRequest inNumber) {
-        Customer customer = customerRepository.findById(inNumber.getId()).get();
-        if (customer == null) {
-            throw new RuntimeException("Customer not found");
-        }
+    public ResponseEntity<CustomerResponse> updateNumber(NumberUpdateRequest inNumber) {
+        Customer customer = findById(inNumber.getId());
         customer.setContactNo(inNumber.getNumber());
         customer = customerRepository.save(customer);
-        return new CustomerResponse(customer);
+
+        CustomerResponse response = new CustomerResponse(customer);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
     @Transactional
-    public CustomerResponse addAddress(AddAddressRequest inAddress) {
-        Customer customer = customerRepository.findById(inAddress.getId()).get();
-        if (customer == null) {
-            throw new RuntimeException("Customer not found");
-        }
+    public ResponseEntity<CustomerResponse> addAddress(AddAddressRequest inAddress) {
+        Customer customer = findById(inAddress.getId());
         List<Address> addressList = customer.getAddress();
 
         if (addressList.size() > 0) {
@@ -82,7 +107,8 @@ public class ServiceImpl implements IService {
                 if (eachAddress.getAddressType().equals(inAddress.getAddressType())) {
                     eachAddress.setAddress(inAddress.getAddress());
                     addressRepository.save(eachAddress);
-                    return new CustomerResponse(customer);
+                    CustomerResponse response = new CustomerResponse(customer);
+                    return new ResponseEntity<>(response, HttpStatus.OK);
                 }
             }
 
@@ -92,6 +118,8 @@ public class ServiceImpl implements IService {
         newAddress.setAddress(inAddress.getAddress());
         addressList.add(newAddress);
         customer = customerRepository.save(customer);
-        return new CustomerResponse(customer);
+
+        CustomerResponse response = new CustomerResponse(customer);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
