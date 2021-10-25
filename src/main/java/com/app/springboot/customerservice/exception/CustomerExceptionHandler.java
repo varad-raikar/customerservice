@@ -32,7 +32,6 @@ public class CustomerExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-
     @ExceptionHandler
     public ResponseEntity<CustomerErrorResponse> genericHandler (Exception exc){
         CustomerErrorResponse error = new CustomerErrorResponse();
