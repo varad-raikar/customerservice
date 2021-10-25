@@ -24,8 +24,6 @@ public class CustomerResponse {
 
     private String subscriptionType;
 
-    private boolean isError = false;
-
     public CustomerResponse(Customer theCustomer){
         this.customerId = theCustomer.getId();
         this.firstName = theCustomer.getFirstName();
