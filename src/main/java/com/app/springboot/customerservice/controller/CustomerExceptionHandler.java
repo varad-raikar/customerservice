@@ -12,8 +12,6 @@ public class CustomerExceptionHandler {
     public ResponseEntity<CustomerErrorResponse> notFound (CustomerNotFoundException exc){
         CustomerErrorResponse error = new CustomerErrorResponse();
         error.setStatus(HttpStatus.NOT_FOUND.value());
-        error.setMessage(exc.getMessage());
-        error.setTimeStamp(System.currentTimeMillis());
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
@@ -22,8 +20,6 @@ public class CustomerExceptionHandler {
     public ResponseEntity<CustomerErrorResponse> customerExists (CustomerAlreadyExistsException exc) {
         CustomerErrorResponse error = new CustomerErrorResponse();
         error.setStatus(HttpStatus.CONFLICT.value());
-        error.setMessage(exc.getMessage());
-        error.setTimeStamp(System.currentTimeMillis());
 
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
@@ -31,21 +27,17 @@ public class CustomerExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<CustomerErrorResponse> invalidInput (CustomerValidationException exc) {
         CustomerErrorResponse error = new CustomerErrorResponse();
-        error.setStatus(HttpStatus.FORBIDDEN.value());
-        error.setMessage(exc.getMessage());
-        error.setTimeStamp(System.currentTimeMillis());
+        error.setStatus(HttpStatus.BAD_REQUEST.value());
 
-        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
 
     @ExceptionHandler
     public ResponseEntity<CustomerErrorResponse> genericHandler (Exception exc){
         CustomerErrorResponse error = new CustomerErrorResponse();
-        error.setStatus(HttpStatus.BAD_REQUEST.value());
-        error.setMessage(exc.getMessage());
-        error.setTimeStamp(System.currentTimeMillis());
+        error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
