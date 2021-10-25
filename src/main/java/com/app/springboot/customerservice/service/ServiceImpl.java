@@ -1,8 +1,8 @@
 package com.app.springboot.customerservice.service;
 
-import com.app.springboot.customerservice.controller.CustomerAlreadyExistsException;
-import com.app.springboot.customerservice.controller.CustomerNotFoundException;
-import com.app.springboot.customerservice.controller.CustomerValidationException;
+import com.app.springboot.customerservice.exception.CustomerAlreadyExistsException;
+import com.app.springboot.customerservice.exception.CustomerNotFoundException;
+import com.app.springboot.customerservice.exception.CustomerValidationException;
 import com.app.springboot.customerservice.dto.AddAddressRequest;
 import com.app.springboot.customerservice.dto.CustomerRequest;
 import com.app.springboot.customerservice.dto.CustomerResponse;

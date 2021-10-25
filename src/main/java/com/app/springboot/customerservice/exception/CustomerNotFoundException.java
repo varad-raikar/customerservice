@@ -1,4 +1,4 @@
-package com.app.springboot.customerservice.controller;
+package com.app.springboot.customerservice.exception;
 
 public class CustomerNotFoundException extends RuntimeException{
 

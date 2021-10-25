@@ -1,7 +1,8 @@
-package com.app.springboot.customerservice.controller;
+package com.app.springboot.customerservice.exception;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Data
 @NoArgsConstructor

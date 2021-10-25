@@ -1,4 +1,4 @@
-package com.app.springboot.customerservice.controller;
+package com.app.springboot.customerservice.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
